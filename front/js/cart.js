@@ -61,7 +61,7 @@ basket.forEach(async (product) => {
 
     // gérer la modification
     quantityInput.addEventListener('change', function() {
-        // coder ici la modif de la quantité du produit dans le panier
+        //modif de la quantité du produit dans le panier
     });
 
     // delete
@@ -73,7 +73,7 @@ basket.forEach(async (product) => {
     
     // gérer la suppression
     deleteElement.addEventListener('click', function() {
-        // coder ici la suppression du panier
+        //la suppression du panier
     });
 
     itemSettingsDelete.appendChild(deleteElement);
