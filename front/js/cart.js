@@ -2,6 +2,7 @@
 
 //afficher la liste des produits qui sont dans le panier et récuperer le panier à partir du local storage 
 
+const productDataMap = [];
 const basket = getBasket();
 const cartItems = document.getElementById('cart__items');
 
@@ -9,6 +10,8 @@ basket.forEach(async (product) => {
     const response = await fetch('http://localhost:3000/api/products/'+product.productId);
     // on transforme les données en objet JSON
     const productApiData = await response.json();
+    // stockage du prix pour le produit dans productPriceMap
+    productDataMap[productApiData._id] = productApiData;
 
     // create article element
     const articleElement = document.createElement('article');
@@ -60,8 +63,24 @@ basket.forEach(async (product) => {
     itemSettingsQuantity.appendChild(quantityInput);
 
     // gérer la modification
-    quantityInput.addEventListener('change', function() {
-        //modif de la quantité du produit dans le panier
+    quantityInput.addEventListener('change', function(event) {
+        const element = event.target;
+        const cartItem = element.closest('.cart__item');
+        const productId = cartItem.dataset.id;
+        const productColor = cartItem.dataset.color;
+        const basket = getBasket().map(item => {
+            if (item.productId === productId && item.color === productColor) {
+                return {
+                    ...item,
+                    quantity: parseInt(element.value)
+                };
+            }
+
+            return item;
+        });
+
+        saveBasket(basket);
+        updateDisplay();
     });
 
     // delete
@@ -72,8 +91,18 @@ basket.forEach(async (product) => {
     deleteElement.innerHTML = 'supprimer';
     
     // gérer la suppression
-    deleteElement.addEventListener('click', function() {
-        //la suppression du panier
+    deleteElement.addEventListener('click', function(event) {
+        const element = event.target;
+        const cartItem = element.closest('.cart__item');
+        const productId = cartItem.dataset.id;
+        const productColor = cartItem.dataset.color;
+
+        const basket = getBasket().filter(item => (
+            item.productId !== productId 
+            || (item.productId === productId && item.color !== productColor))
+        );
+        saveBasket(basket);
+        window.location.reload();
     });
 
     itemSettingsDelete.appendChild(deleteElement);
@@ -95,10 +124,30 @@ basket.forEach(async (product) => {
     cartItems.appendChild(articleElement);
 });
 
+updateDisplay();
 
-//modifier la quantité 
 
-//supprimer un produit
+//affichage du prix total et de la quantité 
+//récupérer les éléments HTML 
+function updateDisplay() {
+    const basket = getBasket();
+    let totalQuantity = 0;
+    let totalPrice = 0;
+
+    basket.forEach(item => {
+        totalQuantity += item.quantity;
+        //console.log(item.productId, productDataMap, productDataMap[item.productId]);
+       // A CORRIGER totalPrice += item.quantity * productDataMap[item.productId].price;
+    });
+
+    // get les element html par leur id ou class (pour la quantité de produit et le prix total)
+    const totalQuantityElement = document.getElementById('totalQuantity'); 
+    totalQuantityElement.innerHTML= totalQuantity;
+
+    const totalPriceElement = document.getElementById('totalPrice');
+    totalPriceElement.innerHTML = totalPrice;
+}
+
 
 
 // initialisation panier

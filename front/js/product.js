@@ -57,7 +57,7 @@ async function init() {
         let existingItemIndex = -1;
         const existingItem = basket.find((item, index) => {
             existingItemIndex = index;
-            if (item._id === newItem._id && item.color === item.color) {
+            if (item._id === newItem._id && item.color === newItem.color) {
                 return true; 
             }
             return false;
