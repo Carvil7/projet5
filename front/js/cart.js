@@ -102,6 +102,7 @@ basket.forEach(async (product) => {
             || (item.productId === productId && item.color !== productColor))
         );
         saveBasket(basket);
+        updateDisplay();
         window.location.reload();
     });
 
@@ -122,13 +123,11 @@ basket.forEach(async (product) => {
 
     // append to div.cart_items
     cartItems.appendChild(articleElement);
+
+    updateDisplay();
 });
 
-updateDisplay();
-
-
 //affichage du prix total et de la quantité 
-//récupérer les éléments HTML 
 function updateDisplay() {
     const basket = getBasket();
     let totalQuantity = 0;
@@ -136,14 +135,11 @@ function updateDisplay() {
 
     basket.forEach(item => {
         totalQuantity += item.quantity;
-        //console.log(item.productId, productDataMap, productDataMap[item.productId]);
-       // A CORRIGER totalPrice += item.quantity * productDataMap[item.productId].price;
+        totalPrice += item.quantity * productDataMap[item.productId].price;
     });
 
-    // get les element html par leur id ou class (pour la quantité de produit et le prix total)
     const totalQuantityElement = document.getElementById('totalQuantity'); 
     totalQuantityElement.innerHTML= totalQuantity;
-
     const totalPriceElement = document.getElementById('totalPrice');
     totalPriceElement.innerHTML = totalPrice;
 }
@@ -165,3 +161,77 @@ function getBasket() {
 function saveBasket(basket) {
     localStorage.setItem('basket', JSON.stringify(basket));
 }
+
+
+async function postOrder() {
+    const bodyData = {
+        contact: {
+            lastName: document.getElementById("lastName").value,
+            firstName: document.getElementById("firstName").value,
+            address: document.getElementById("address").value,
+            city: document.getElementById("city").value,
+            email: document.getElementById("email").value,
+        },
+        products: getBasket().map(item => item.productId)
+    }
+
+    try {
+        const response = await fetch ("http://localhost:3000/api/products/order", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8'
+            },
+            body: JSON.stringify(bodyData)
+        });
+        const responseData = response.json();
+        document.location.href=`./confirmation.html?orderId=${responseData.orderId}`;
+    } catch(e) {
+        console.log(e);
+    }
+}
+
+// formulaire 
+// On recupere le formulaire du DOM
+const form = document.querySelector(".cart__order__form");
+
+// Ajout de l'evenement submit sur le formulaire
+form.addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const keys = Object.keys(infoVerification)
+    const successInputs = keys.filter(prop => infoVerification[prop]);
+
+    if(successInputs.length === 5){
+        postOrder();
+        localStorage.clear();
+        console.log("Command submitted and LocalStorage cleared");
+    }
+});
+
+// On recupere les elements du dom : input & errorMsg
+const errorFieldElements = [...document.querySelectorAll(".cart__order__form__question > p")];
+const inputFieldElements = [...document.querySelectorAll(".cart__order__form__question > input")];
+
+const fieldsValidation = {
+    firstName: false,
+    lastName: false,
+    address: false,
+    city: false,
+    email: false,
+}
+
+const fieldsRegex = { 
+    firstName: /^(?=.{1,20}$)[a-z]+(?:['_.\s][a-z]+)*$/i,
+    lastName: /^(?=.{1,20}$)[a-z]+(?:['_.\s][a-z]+)*$/i,
+    address: /^[a-zA-Z0-9\s,'-]*$/i,
+    city: /^[a-zA-Z\u0080-\u024F]+(?:([\ \-\']|(\.\ ))[a-zA-Z\u0080-\u024F]+)*$/,
+    email: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
+}
+
+inputFieldElements.forEach(inputField => {
+    inputField.addEventListener('input', function() {
+        // validation des champs du formulaire 
+    });
+});
+
+//afficher un message d'erreur si besoin 
