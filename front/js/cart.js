@@ -183,33 +183,14 @@ async function postOrder() {
             },
             body: JSON.stringify(bodyData)
         });
-        const responseData = response.json();
+        const responseData = await response.json();
         document.location.href=`./confirmation.html?orderId=${responseData.orderId}`;
     } catch(e) {
         console.log(e);
     }
 }
 
-// formulaire 
-// On recupere le formulaire du DOM
-const form = document.querySelector(".cart__order__form");
-
-// Ajout de l'evenement submit sur le formulaire
-form.addEventListener('submit', function(e) {
-    e.preventDefault();
-
-    const keys = Object.keys(infoVerification)
-    const successInputs = keys.filter(prop => infoVerification[prop]);
-
-    if(successInputs.length === 5){
-        postOrder();
-        localStorage.clear();
-        console.log("Command submitted and LocalStorage cleared");
-    }
-});
-
 // On recupere les elements du dom : input & errorMsg
-const errorFieldElements = [...document.querySelectorAll(".cart__order__form__question > p")];
 const inputFieldElements = [...document.querySelectorAll(".cart__order__form__question > input")];
 
 const fieldsValidation = {
@@ -228,10 +209,51 @@ const fieldsRegex = {
     email: /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
 }
 
+// formulaire 
+// On recupere le formulaire du DOM
+const form = document.querySelector(".cart__order__form");
+// Ajout de l'evenement submit sur le formulaire
+form.addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    validateFields();
+    const invalidValues = Object.values(fieldsValidation).filter(value => value === false);
+
+    if(invalidValues.length === 0){
+        postOrder();
+        localStorage.clear();
+        console.log("Command submitted and LocalStorage cleared");
+    }
+});
+
 inputFieldElements.forEach(inputField => {
-    inputField.addEventListener('input', function() {
+    inputField.addEventListener('input', function(event) {
         // validation des champs du formulaire 
+        const targetElement = event.target;
+        const id = targetElement.id;
+        const value = targetElement.value;
+        const errorMsgElement = document.getElementById(id+'ErrorMsg');
+
+        fieldsValidation[id] = fieldsRegex[id].test(value);
+        if (fieldsValidation[id] === false) {
+            errorMsgElement.innerHTML = 'Valeur du champs invalide.';
+        } else {
+            errorMsgElement.innerHTML = '';
+        }
     });
 });
 
-//afficher un message d'erreur si besoin 
+function validateFields() {
+    inputFieldElements.forEach(inputField => {
+        const id = inputField.id;
+        const value = inputField.value;
+        const errorMsgElement = document.getElementById(id+'ErrorMsg');
+
+        fieldsValidation[id] = fieldsRegex[id].test(value);
+        if (fieldsValidation[id] === false) {
+            errorMsgElement.innerHTML = 'Valeur du champs invalide.';
+        } else {
+            errorMsgElement.innerHTML = '';
+        }
+    });
+}
