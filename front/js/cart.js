@@ -1,7 +1,5 @@
 //page panier
 
-//afficher la liste des produits qui sont dans le panier et récuperer le panier à partir du local storage 
-
 const productDataMap = [];
 const basket = getBasket();
 const cartItems = document.getElementById('cart__items');

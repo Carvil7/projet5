@@ -74,14 +74,6 @@ async function init() {
         saveBasket(basket);
     });
 
-
-    // dans le onclick, récupérer le panier avec getBasket, puis ajouter dans le tableau le produit correspondant, et enfin sauvegarder le panier avec saveBasket
-
-
-    // prendre en compte également la quantité renseignée dans l'input "quantity" (getElementById pour récupérer l'élément et connaitre la valeur saisie)
-   
-
-    // ...
 }
 
 // initialisation panier
