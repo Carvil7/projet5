@@ -1,4 +1,4 @@
-//page panier
+//panier 
 
 const productDataMap = [];
 const basket = getBasket();

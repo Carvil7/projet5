@@ -1,3 +1,5 @@
+//page confirmation
+
 // Récupération de l'id du produit passer dans l'URL
 const currentUrl = window.location.href;
 const url = new URL(currentUrl);

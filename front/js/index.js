@@ -1,3 +1,5 @@
+//index
+
 // Contact de l'API , appel des fonctions pour l'ajout des éléments dans le DOM
 async function init() {
   try {

@@ -1,3 +1,5 @@
+//page produit
+
 async function init() {
     // récupéré l'url actuelle sous forme de string
     const currentUrl = window.location.href;
