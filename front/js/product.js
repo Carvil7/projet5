@@ -19,8 +19,12 @@ async function init() {
     //image du produit 
     const imgElement = document.createElement("img");
     imgElement.setAttribute("src", productData.imageUrl);
+    //alt
+    imgElement.setAttribute("alt", productData.altTxt);
+
     const imgContainer = document.getElementById("image");
     imgContainer.appendChild(imgElement);
+  
     
     // title
     const titleElement = document.getElementById("title");
@@ -49,7 +53,10 @@ async function init() {
         const basket = getBasket();
         const quantityInput = document.getElementById("quantity");
         const colorSelect = document.getElementById("colors");
-
+        if (colorSelect.value==null ||colorSelect.value==='' ||quantityInput.value==null ||quantityInput.value<1 ) {
+            alert ("choisissez une couleur et/ ou une quantité");
+            return;
+        }
         const newItem = {
             productId: productData._id,
             quantity: parseInt(quantityInput.value),

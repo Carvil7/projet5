@@ -25,6 +25,8 @@ async function init() {
       // on créé un élément <img>
       const imgElement = document.createElement('img');
       imgElement.setAttribute('src', productData.imageUrl);
+      //alt
+      imgElement.setAttribute('alt', productData.altTxt);
       
       // on créé un élément <h3>
       const h3Element = document.createElement('h3');

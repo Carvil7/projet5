@@ -23,6 +23,8 @@ basket.forEach(async (product) => {
     const img = document.createElement('img');
     img.setAttribute('src', productApiData.imageUrl);
     imgContainer.appendChild(img);
+    //alt
+    img.setAttribute('alt', productApiData.altTxt);
     // append image to article
     articleElement.appendChild(imgContainer);
     
@@ -63,6 +65,10 @@ basket.forEach(async (product) => {
     // gérer la modification
     quantityInput.addEventListener('change', function(event) {
         const element = event.target;
+        if (element.value<0) {
+            alert ("choisissez une quantité");
+            return;    
+        }   
         const cartItem = element.closest('.cart__item');
         const productId = cartItem.dataset.id;
         const productColor = cartItem.dataset.color;
